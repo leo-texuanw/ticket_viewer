@@ -69,7 +69,7 @@ __pycache__
 ############
 .Db_Store
 *.log
-*.secret.*
+*secret*
 
 ################
 # This project #

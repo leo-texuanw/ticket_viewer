@@ -1,0 +1,3 @@
+SUBDOMAIN = ""
+USER      = ""
+PASSWD    = ""
