@@ -1,9 +1,9 @@
 import requests
-from requests.exceptions import HTTPError, RequestException 
+from requests.exceptions import HTTPError, RequestException
 from time import gmtime, strftime
-from base64 import b64decode
 
-import api_secret_config as cfg
+from . import api_secret_config as cfg
+
 
 class Zendesk():
     """ Base class for Zendesk APIs """
@@ -29,7 +29,7 @@ class Zendesk():
             status = self.OK
             try:
                 content = response.json()
-            except:
+            except Exception:
                 status = self.ERROR
                 content = "Unexpected return from the server"
 
@@ -49,10 +49,15 @@ class Zendesk():
             # unexpected error caused by requests
             self.record_error(api, request_err)
             status, content = self.ERROR, str(request_err)
+        except Exception as err:
+            # catch all unexpected errors
+            self.record_error(api, err)
+            status, content = self.ERROR, str(err)
 
         return (status, content)
 
     def record_error(self, api, err_msg):
+        """ Currently only print to terminal """
         time = strftime(self.TIME_FORMAT, gmtime())
         err_header = f"[ERROR({time})] - {api} -"
 
@@ -72,24 +77,15 @@ class ZendeskTickets(Zendesk):
         url = f"{self.API_URL}/tickets.json"
         return self.request("ticket_list", url)
 
-    def ticket_show(self, id):
+    def ticket_detail(self, id):
         assert(isinstance(id, int) or id.isdigit())
 
         url = f"{self.MOD_URL}/{id}.json"
-        return self.request("ticket_show", url)
+        return self.request("ticket_detail", url)
 
 
-if __name__ == '__main__':
-    user, passwd = cfg.USER, cfg.PASSWD
-    if cfg.ENCODED:
-        user = b64decode(user)
-        passwd = b64decode(passwd)
-
-    apis = ZendeskTickets(cfg.SUBDOMAIN, user, passwd)
-
-    status, response = apis.ticket_list()
-    # print(status, response)
-
-    id = response['tickets'][0]['id']
-    status, response = apis.ticket_show(id)
-    print(status, response)
+def ticket_apis():
+    assert(isinstance(cfg.SUBDOMAIN, str))
+    assert(isinstance(cfg.USER, str))
+    assert(isinstance(cfg.PASSWD, str))
+    return ZendeskTickets(cfg.SUBDOMAIN, cfg.USER, cfg.PASSWD)

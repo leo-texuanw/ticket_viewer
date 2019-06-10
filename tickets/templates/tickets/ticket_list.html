@@ -1,0 +1,18 @@
+{% block content %}
+{% if status == "OK" %}
+
+    {% for ticket in content.tickets %}
+        <p>{{ ticket.id }}
+        <a href="{{ request.build_absolute_url }}{{ ticket.id }}" >{{ticket.subject}}</a>
+        [{{ ticket.status }}]</p>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>Error Occur: {{ status }}</p>
+    <p>Error info - {{ content }} </p>
+
+{% endif %}
+
+{% endblock %}

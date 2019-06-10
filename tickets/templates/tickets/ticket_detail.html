@@ -1,0 +1,18 @@
+{% block content %}
+
+{% if status == "OK" %}
+
+    {% with ticket=content.ticket %}
+        <p>id: {{ ticket.id }}</p>
+        <p>subject: {{ ticket.subject }}</p>
+        <p>status: [{{ ticket.status }}]</p>
+    {% endwith %}
+
+{% else %}
+
+    <p>Error Occur: {{ status }}</p>
+    <p>Error info - {{ content }} </p>
+
+{% endif %}
+
+{% endblock %}
