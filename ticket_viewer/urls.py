@@ -15,9 +15,13 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import include, path
+from tickets.views import TicketListView
 
 urlpatterns = [
-    path('', include('tickets.urls')),
+    path('', TicketListView.as_view()),
     path('tickets/', include('tickets.urls')),
     # path('admin/', admin.site.urls),
 ]
+
+handler404 = 'ticket_viewer.views.handler404'
+handler500 = 'ticket_viewer.views.handler500'

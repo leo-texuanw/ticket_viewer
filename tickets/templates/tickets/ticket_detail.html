@@ -1,17 +1,22 @@
+{% extends 'base.html' %}
+
 {% block content %}
 
 {% if status == "OK" %}
 
+    <h1>Ticket Detail</h1>
     {% with ticket=content.ticket %}
-        <p>id: {{ ticket.id }}</p>
-        <p>subject: {{ ticket.subject }}</p>
-        <p>status: [{{ ticket.status }}]</p>
+        <p>Id: {{ ticket.id }}</p>
+        <p>Subject: {{ ticket.subject }}</p>
+        <p>Current status: {{ ticket.status }}</p>
     {% endwith %}
 
 {% else %}
 
-    <p>Error Occur: {{ status }}</p>
-    <p>Error info - {{ content }} </p>
+    <h1>Ooops, something went wrong...</h1>
+    <p><b>Error Type:</b> {{ status }}</p>
+    <p><b>Hint:</b> {{ hint }}</p>
+    <p><b>Original Error info:</b> {{ content }} </p>
 
 {% endif %}
 

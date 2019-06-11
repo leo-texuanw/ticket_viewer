@@ -1,6 +1,5 @@
 from os.path import join
 from django.shortcuts import render, redirect
-from django.urls import reverse
 
 from django.views.generic import (
     ListView,
@@ -10,6 +9,23 @@ from django.views.generic import (
 from tools.zendesk import ticket_apis as apis
 
 
+def ret_handler(ret):
+    context = {}
+    if ret.get('status', ''):
+        # response status
+        context['status'] = ret['status']
+    if ret.get('content', ''):
+        # main part of the request when success
+        # error message when request failed
+        context['content'] = ret['content']
+    if ret.get('hint', ''):
+        # optional hint for end user while error occur
+        context['hint'] = ret['hint'] + " Any further concerns please \
+                            contact the website maintainer: +61 xxx-xxx-xxx"
+
+    return context
+
+
 class TicketListView(ListView):
     template_name = "tickets/ticket_list.html"
 
@@ -17,12 +33,8 @@ class TicketListView(ListView):
         if request.path == '/':
             return redirect(join(request.build_absolute_uri(), 'tickets'))
 
-        status, content = apis().ticket_list()
-
-        context = {
-            "status": status,
-            "content": content
-        }
+        ret = apis().ticket_list()
+        context = ret_handler(ret)
 
         return render(request, self.template_name, context)
 
@@ -31,11 +43,7 @@ class TicketDetailView(DetailView):
     template_name = "tickets/ticket_detail.html"
 
     def get(self, request, id, *args, **kwargs):
-        status, content = apis().ticket_detail(id)
-
-        context = {
-            "status": status,
-            "content": content
-        }
+        ret = apis().ticket_detail(id)
+        context = ret_handler(ret)
 
         return render(request, self.template_name, context)
