@@ -8,6 +8,7 @@
     {% with ticket=content.ticket %}
         <p>Id: {{ ticket.id }}</p>
         <p>Subject: {{ ticket.subject }}</p>
+        <p>Description: {{ ticket.description }}</p>
         <p>Current status: {{ ticket.status }}</p>
     {% endwith %}
 
@@ -15,7 +16,9 @@
 
     <h1>Ooops, something went wrong...</h1>
     <p><b>Error Type:</b> {{ status }}</p>
-    <p><b>Hint:</b> {{ hint }}</p>
+    {% if hint %}
+        <p><b>Hint:</b> {{ hint }}</p>
+    {% endif %}
     <p><b>Original Error info:</b> {{ content }} </p>
 
 {% endif %}

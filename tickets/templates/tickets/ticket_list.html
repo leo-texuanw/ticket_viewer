@@ -5,6 +5,13 @@
 {% if status == "OK" %}
     <h1> Ticket List </h1>
 
+    {% if content.previous_page %}
+        <b><a href='?page={{ content.previous_page }}'> Last page </a></b>
+    {% endif %}
+    {% if content.next_page %}
+        <b><a href="?page={{ content.next_page }}" >Next page</a></b>
+    {% endif %}
+
     {% for ticket in content.tickets %}
         <p>{{ ticket.id }}
         <a href="{{ request.build_absolute_url }}{{ ticket.id }}" >{{ticket.subject}}</a>
@@ -16,7 +23,9 @@
 
     <h1>Ooops, something went wrong...</h1>
     <p><b>Error Type:</b> {{ status }}</p>
-    <p><b>Hint:</b> {{ hint }}</p>
+    {% if hint %}}
+        <p><b>Hint:</b> {{ hint }}</p>
+    {% endif %}
     <p><b>Original Error info:</b> {{ content }} </p>
 
 {% endif %}

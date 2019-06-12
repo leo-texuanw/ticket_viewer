@@ -1,3 +1,0 @@
-SUBDOMAIN = ""
-USER      = ""
-PASSWD    = ""

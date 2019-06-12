@@ -2,7 +2,8 @@ import requests
 from requests.exceptions import HTTPError, RequestException
 from time import gmtime, strftime
 
-from . import api_secret_config as cfg
+from . import secret_config as cfg
+from . import resp_status as status
 
 
 class Zendesk():
@@ -15,8 +16,8 @@ class Zendesk():
         self.passwd = passwd
         self.API_URL = f"https://{subdomain}.zendesk.com/api/{API_VERSION}"
 
-        self.OK = "OK"
-        self.ERROR = "ERROR"
+        self.OK = status.OK
+        self.ERROR = status.ERROR
         self.TIME_FORMAT = "%m/%d/%Y %H:%M:%S"
 
     def request(self, api_name, url):
@@ -38,30 +39,21 @@ class Zendesk():
             # unsuccessful status code
             self.record_error(api_name, http_err)
 
-            if response.status_code == 401:
-                ret['status'] = "ERROR_AUTH_FAILURE"
-                ret['hint'] = "Incorrect username and password."
-            elif response.status_code == 404:
-                ret['status'] = "ERROR_PAGE_NOT_FOUND"
-                ret['hint'] = "What you want to look up may not exist."
-            elif response.status_code >= 500:
-                ret['status'] = "ERROR_SERVICE_NOT_AVAILABLE"
-                ret['hint'] = "The server is busy or not available currently.\
-                        Please try again later."
-            else:
-                print(response.status_code)
+            ret['status'] = response.status_code
             ret['content'] = str(http_err)
 
         except RequestException as request_err:
             # unexpected error caused by requests
             self.record_error(api_name, request_err)
             ret['status'], ret['content'] = self.ERROR, str(request_err)
+
         except UnicodeError as unicode_err:
             self.record_error(api_name, unicode_err)
             ret['status'] = self.ERROR
             ret['hint'] = "Failed encode the url. Have you setup \
                            your SUBDOMAIN correctly?"
             ret['content'] = str(unicode_err)
+
         except Exception as err:
             # catch all unexpected errors
             self.record_error(api_name, err)
@@ -87,8 +79,10 @@ class ZendeskTickets(Zendesk):
         API_MODULE = "tickets"
         self.MOD_URL = f"{self.API_URL}/{API_MODULE}"
 
-    def ticket_list(self):
+    def ticket_list(self, page=None):
         url = f"{self.API_URL}/tickets.json"
+        if isinstance(page, int) or isinstance(page, str) and page.isdigit():
+            url += f"?page={page}"
         return self.request("ticket_list", url)
 
     def ticket_detail(self, id):
