@@ -45,12 +45,12 @@ command to clone the project.
 Click [here](<https://www.zendesk.com/register/free-trial/>) to register for
 free trail, if you don't have a Zendesk account yet.  
 
-Now let's start the server.
+Now let's start the server (Make sure your current directory is where `manage.py` stays).
 
 ### On local machine (Dev Mode)
 
 ```shell
-    $ python manage.py runserver 5000
+    $ python manage.py runserver 8000
 ```
 
 You can change the default port 8000 to be any available port, if this port is
@@ -58,10 +58,21 @@ already in use on your machine.
 
 ### On a server (Product Mode)
 
-1. Add your public ip into `ALLOWED_HOSTS` field in `ticket_viewer/settings.py`
+1. Add your public ip or hostname into `ALLOWED_HOSTS` field in `ticket_viewer/settings.py`
 2. Set `DEBUG` field in the same file as `False`
 3. Start the server with command
 
 ```    shell
     $ python manage.py runserver 0:8000
 ```
+
+After you start the server, now let's open browser and visit this website by
+```
+    http://127.0.0.1:8000/
+```
+if you are running at your local machine; or
+
+```
+    http://hostname:8000/
+```
+if you are running in a server.
