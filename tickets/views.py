@@ -6,7 +6,7 @@ from django.views.generic import (
     DetailView,
 )
 
-from tools.zendesk import ticket_apis as apis
+from ticket_viewer.zendesk import ticket_apis as apis
 
 
 def ret_handler(ret):
